@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:include schemaLocation="../V1.01/UFTP-V1.01-common.xsd"/>
+
+    <!-- -->
+    <!-- GranularityType Type -->
+    <!-- -->
+    <xs:simpleType name="GranularityType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(15|30|60)"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- -->
+    <!-- Node Type -->
+    <!-- -->
+    <xs:simpleType name="NodeType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(Bus|Nodal|Device)"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- -->
+    <!-- Profile type Type -->
+    <!-- -->
+    <xs:simpleType name="ProfileType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(Voltage (V)|Current (A)|Power (W)|Capacity (W))"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <!-- -->
+    <!-- Grid Node Type -->
+    <!-- -->
+    <xs:complexType name="GridNodeType">
+        <xs:attributeGroup ref="GridNodeAttrGroup"/>
+    </xs:complexType>
+    <xs:attributeGroup name="GridNodeAttrGroup">
+        <xs:attribute name="NodeID" type="UUIDType" use="required">
+            <xs:annotation>
+                <xs:documentation>Unique ID of the Node in the grid.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="NodeType" type="NodeType" use="required">
+            <xs:annotation>
+                <xs:documentation>Grid node type.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="NodeDescription" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>Description of the grid node.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <!-- -->
+    <!-- Time Series Item Type -->
+    <!-- -->
+    <xs:complexType name="TimeSeriesItemType">
+        <xs:attribute name="TimeSeriesPosition" type="xs:integer" use="required">
+            <xs:annotation>
+                <xs:documentation>TimeSeries item position in the whole time series.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="StartPeriod" type="PeriodType" use="required">
+            <xs:annotation>
+                <xs:documentation>Start Period of the measurement.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="EndPeriod" type="PeriodType" use="required">
+            <xs:annotation>
+                <xs:documentation>End Period of the measurement.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Value" type="xs:decimal" use="required">
+            <xs:annotation>
+                <xs:documentation>Measurement value.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <!-- -->
+    <!-- Time Series TLS Item Type -->
+    <!-- -->
+    <xs:complexType name="TimeSeriesTLSItemType">
+        <xs:attribute name="TimeSeriesPosition" type="xs:integer" use="required">
+            <xs:annotation>
+                <xs:documentation>TimeSeries item position in the whole time series.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="StartPeriod" type="PeriodType" use="required">
+            <xs:annotation>
+                <xs:documentation>Start Period of the measurement.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="EndPeriod" type="PeriodType" use="required">
+            <xs:annotation>
+                <xs:documentation>End Period of the measurement.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Value" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Signal value (colour) : red, yellow, green.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="TimeSeriesType">
+        <xs:sequence>
+            <xs:element name="TimeSeriesItem" type="TimeSeriesItemType" maxOccurs="unbounded"/>
+            <xs:element name="TimeSeriesTSLItem" type="TimeSeriesTLSItemType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GridNodeDataItemType">
+        <xs:sequence>
+            <xs:element name="GridNode" type="GridNodeType">
+                <xs:annotation>
+                    <xs:documentation>Unique ID of the Node in the grid.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="TimeSeries" type="TimeSeriesType">
+                <xs:annotation>
+                    <xs:documentation>Time series data.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="StartPeriod" type="PeriodType" use="required">
+            <xs:annotation>
+                <xs:documentation>Start Period of the measurement.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="EndPeriod" type="PeriodType" use="required">
+            <xs:annotation>
+                <xs:documentation>End Period of the measurement.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Granularity" type="GranularityType" use="required">
+            <xs:annotation>
+                <xs:documentation>Granularoty time series data (15 min, 30 min 60 min).</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ProfileType" type="ProfileType" use="required">
+            <xs:annotation>
+                <xs:documentation>Time series data type - voltage (V), current (A), power (W), capacity limit (W). Defines the unit of data
+                    in time series.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="GridNodesDataType">
+        <xs:sequence>
+            <xs:element name="GridNodesData" type="GridNodeDataItemType" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>List of Grid nodes.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="GridNodesData" type="GridNodesDataType"/>
+
+</xs:schema>
